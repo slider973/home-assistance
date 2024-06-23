@@ -26,7 +26,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${MQTT_PASSWORD}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ./rabbitmq-init/init-mqtt-plugin.sh:/init-mqtt-plugin.sh
+      - ./init-mqtt-plugin.sh:/init-mqtt-plugin.sh
     command: /init-mqtt-plugin.sh
 
   zwavejs2mqtt:
