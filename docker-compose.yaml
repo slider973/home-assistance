@@ -27,7 +27,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - ./rabbitmq-init/init.sh:/init.sh
-    command: /init.sh
+    command: /init-mqtt-plugin.sh
 
   zwavejs2mqtt:
     container_name: zwavejs2mqtt
