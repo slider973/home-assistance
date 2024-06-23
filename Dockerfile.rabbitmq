@@ -1,0 +1,10 @@
+FROM rabbitmq:management
+
+# Copier le script dans l'image
+COPY init-mqtt-plugin.sh /init-mqtt-plugin.sh
+
+# Donner les permissions d'exécution au script
+RUN chmod +x /init-mqtt-plugin.sh
+
+# Exécuter le script
+CMD ["/init-mqtt-plugin.sh"]

@@ -15,7 +15,9 @@ services:
       - /dev/ttyACM0:/dev/ttyACM0
 
   rabbitmq:
-    image: rabbitmq:management
+    build:
+      context: .
+      dockerfile: Dockerfile.rabbitmq
     container_name: rabbitmq
     ports:
       - "5672:5672"  # AMQP port
@@ -26,8 +28,6 @@ services:
       RABBITMQ_DEFAULT_PASS: ${MQTT_PASSWORD}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ./init-mqtt-plugin.sh:/init-mqtt-plugin.sh
-    command: /init-mqtt-plugin.sh
 
   zwavejs2mqtt:
     container_name: zwavejs2mqtt
