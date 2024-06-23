@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - /otp/home-assistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyACM0:/dev/ttyACM0
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  # AMQP port
+      - "15672:15672"  # Management UI port
+      - "1883:1883"  # MQTT port
+    environment:
+      RABBITMQ_DEFAULT_USER: ${MQTT_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${MQTT_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq-init/init.sh:/init.sh
+    command: /init.sh
+
+  zwavejs2mqtt:
+    container_name: zwavejs2mqtt
+    image: zwavejs/zwavejs2mqtt:latest
+    restart: unless-stopped
+    ports:
+      - "8091:8091"
+      - "3000:3000"
+    volumes:
+      - /opt/home-assistant/zwavejs2mqtt/config:/usr/src/app/store
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    environment:
+      - MQTT_BROKER_URL=mqtt://rabbitmq:1883
+      - MQTT_USERNAME=${MQTT_USERNAME}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+
+volumes:
+  rabbitmq_data:
